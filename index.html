@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ColorMood - Mood Analyzer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f0f4f8;
+    }
+    h1 { margin-top: 20px; color: #333; }
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(5, 60px);
+      gap: 10px;
+      margin: 20px;
+    }
+    .color-box {
+      width: 60px; height: 60px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.2s;
+    }
+    .color-box.selected {
+      border: 2px solid #000;
+      transform: scale(1.1);
+    }
+    #result {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      background-color: #fff3cd;
+      width: 80%;
+      max-width: 400px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      border-radius: 6px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 ColorMood</h1>
+  <p>Select 3 colors that you feel connected to:</p>
+
+  <div class="palette" id="palette">
+    <!-- Color boxes will be inserted by JavaScript -->
+  </div>
+
+  <button onclick="analyzeMood()">Analyze Mood</button>
+
+  <div id="result"></div>
+
+  <script>
+    const colors = [
+      { name: "Red", hex: "#e74c3c" },
+      { name: "Blue", hex: "#3498db" },
+      { name: "Green", hex: "#2ecc71" },
+      { name: "Yellow", hex: "#f1c40f" },
+      { name: "Purple", hex: "#9b59b6" },
+      { name: "Orange", hex: "#e67e22" },
+      { name: "Pink", hex: "#ff69b4" },
+      { name: "Grey", hex: "#95a5a6" },
+      { name: "Black", hex: "#2c3e50" },
+      { name: "White", hex: "#ecf0f1" },
+    ];
+
+    const selectedColors = [];
+
+    const palette = document.getElementById("palette");
+
+    colors.forEach((color, index) => {
+      const box = document.createElement("div");
+      box.className = "color-box";
+      box.style.backgroundColor = color.hex;
+      box.dataset.name = color.name;
+      box.onclick = function () {
+        if (box.classList.contains("selected")) {
+          box.classList.remove("selected");
+          const idx = selectedColors.indexOf(color.name);
+          if (idx > -1) selectedColors.splice(idx, 1);
+        } else {
+          if (selectedColors.length >= 3) {
+            alert("You can select only 3 colors!");
+            return;
+          }
+          box.classList.add("selected");
+          selectedColors.push(color.name);
+        }
+      };
+      palette.appendChild(box);
+    });
+
+    function analyzeMood() {
+      if (selectedColors.length !== 3) {
+        alert("Please select exactly 3 colors.");
+        return;
+      }
+
+      const moodMap = {
+        Red: "You're feeling energetic and passionate!",
+        Blue: "You're calm, focused, and thoughtful.",
+        Green: "You're balanced, refreshed, and connected to nature.",
+        Yellow: "You're cheerful, optimistic, and creative!",
+        Purple: "You're spiritual, wise, and imaginative.",
+        Orange: "You're enthusiastic and outgoing.",
+        Pink: "You're loving, gentle, and caring.",
+        Grey: "You're neutral, practical, and calm.",
+        Black: "You're mysterious, powerful, or introspective.",
+        White: "You're feeling pure, peaceful, or in need of clarity.",
+      };
+
+      let message = selectedColors.map(c => `🔹 ${moodMap[c]}`).join("<br>");
+
+      document.getElementById("result").innerHTML = `
+        <h2>Your Mood Insights</h2>
+        <p>${message}</p>
+        <button onclick="location.reload()">Try Again</button>
+      `;
+      document.getElementById("result").style.display = "block";
+    }
+  </script>
+</body>
+</html>
